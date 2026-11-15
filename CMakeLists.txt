@@ -8,8 +8,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets OpenGLWidgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets OpenGLWidgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
+endif()
 
 set(PROJECT_SOURCES
         main.cpp
@@ -26,4 +30,13 @@ add_executable(itmo-gl-hw-2026
     openglwidget.h openglwidget.cpp
 )
 
-target_link_libraries(itmo-gl-hw-2026 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::OpenGLWidgets)
+set(QT_LIBS Qt${QT_VERSION_MAJOR}::Widgets)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    list(APPEND QT_LIBS Qt6::OpenGLWidgets)
+else()
+    find_package(Qt5 REQUIRED COMPONENTS OpenGL)
+    list(APPEND QT_LIBS Qt5::OpenGL)
+endif()
+
+target_link_libraries(itmo-gl-hw-2026 PRIVATE ${QT_LIBS})

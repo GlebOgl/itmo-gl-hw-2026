@@ -8,6 +8,11 @@
 #include <QOpenGLTexture>
 #include <QOpenGLVertexArrayObject>
 #include <QWindow>
+#include <QSlider>
+#include <QWheelEvent>
+#include <QMouseEvent>
+#include <QtMath>
+#include <cmath>
 
 class Window : public OpenGLWidget
 {
@@ -20,6 +25,11 @@ public:
     void onInit() override;
     void onRender() override;
     void onResize(size_t width, size_t height) override;
+    void mousePressEvent(QMouseEvent* e) override;
+    void mouseReleaseEvent(QMouseEvent* e) override;
+    void wheelEvent(QWheelEvent* e) override;
+    void mouseMoveEvent(QMouseEvent* e) override;
+    void computeXRange(float& xL, float& xR) const;
 
 private:
     QElapsedTimer timer_;
@@ -40,5 +50,17 @@ private:
     std::unique_ptr<QOpenGLShaderProgram> program_;
 
     bool animated_ = true;
-    bool сolorAnimated_ = animated_;
+    bool colorAnimated_ = animated_;
+
+    float camX_ = 0.0f;
+    float camY_ = 0.0f;
+    float camZ_ = 4.0f;
+    float fov_ = 60.0f;
+    float aspect_ = 1.0f;
+
+    QPoint lastMousePos_;
+    bool   panning_ = false;
+
+    void rebuildProjection();
+    void rebuildCamera();
 };
